@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geolocation Example</title>
+    <style>
+        #contenedor{
+            width:200px;
+            height:857px;
+            position:relative;
+        }
+        #marcas{
+            width:100%;
+            height:100%;
+            position:absolute;
+            top:0px;
+            left:0px;
+        }
+        .marca{
+            width:20px;
+            height:20px;
+            position:absolute;
+            top:100px;
+            left:100px;
+            background:red;
+            border:2px solid black;
+            border-radius:20px 20px 20px 0px;
+            transform:translate(-10px,-28px) rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+
+<div id="contenedor">
+    <img src="Blue_Marble_2002.png">
+    <div id="marcas">
+        <div class="marca" id="yo"></div>
+    </div>
+</div>
+
+<script>
+ 
+    navigator.geolocation.getCurrentPosition(function(posicion){
+        let lat = posicion.coords.latitude
+        let lon = posicion.coords.longitude
+        console.log(lat,lon)
+        let centrox = 960;
+        let centroy = 480;
+        let conversorlat = centroy-(lat/90)*centroy
+        let conversorlon = centrox+(lon/180)*centrox
+        let yo = document.querySelector("#yo")
+        yo.style.top = conversorlat+"px"
+        yo.style.left = conversorlon+"px"   
+    }, function(){
+        
+    });
+    window.onload = function(){
+        fetch("https://jotauve.es/cargar")
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(datos){
+            let marcas = datos
+            let contenedor = document.querySelector("#marcas")
+            marcas.forEach(function(marca){
+                let nuevamarca = document.createElement("div")
+                nuevamarca.classList.add("marca")
+                let centrox = 960;
+                let centroy = 480;
+                let conversorlat = centroy-(marca.latitude/90)*centroy
+                let conversorlon = centrox+(marca.longitude/180)*centrox
+                nuevamarca.style.top = conversorlat+"px"
+                nuevamarca.style.left = conversorlon+"px" 
+                contenedor.appendChild(nuevamarca)
+            })
+            
+        })
+    }
+
+    
+</script>
+
+</body>
+</html>
